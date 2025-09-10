@@ -10,8 +10,8 @@
   <!-- Top Banner -->
   <div id="top-banner">
     <img id="banner-image" src="assets/logo.png" alt="Logo"/>
-    <div id="banner-title">Unpretty Popstar : HIP POP Princess Ranker</h1>
-    <div id="banner-subtitle">Make your top 12 !</p>
+    <div id="banner-title">Unpretty Popstar : HIP POP Princess Ranker</div>
+    <div id="banner-subtitle">Make your top 12!</div>
   </div>
 
   <!-- Flex container -->
@@ -35,92 +35,7 @@
     <!-- Pyramid Ranking -->
     <div id="ranking__pyramid">
       <h2 id="ranking__title">My Pyramid</h2>
-
-      <!-- Row 1 -->
-      <div class="ranking__row">
-        <div class="ranking__entry">
-          <div class="ranking__entry-view">
-            <div class="ranking__entry-icon">
-              <img class="ranking__entry-img" src="assets/crown.PNG" alt="empty"/>
-              <div class="ranking__entry-icon-border no-rank-border"></div>
-            </div>
-            <div class="ranking__entry-icon-badge">1</div>
-          </div>
-          <div class="ranking__row-text">
-            <div class="name">Empty</div>
-            <div class="year"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 2 -->
-      <div class="ranking__row">
-        <div class="ranking__entry">
-          <div class="ranking__entry-view">
-            <div class="ranking__entry-icon">
-              <img class="ranking__entry-img" src="assets/crown.PNG" alt="empty"/>
-              <div class="ranking__entry-icon-border no-rank-border"></div>
-            </div>
-            <div class="ranking__entry-icon-badge">2</div>
-          </div>
-          <div class="ranking__row-text">
-            <div class="name">Empty</div>
-            <div class="year"></div>
-          </div>
-        </div>
-
-        <div class="ranking__entry">
-          <div class="ranking__entry-view">
-            <div class="ranking__entry-icon">
-              <img class="ranking__entry-img" src="assets/crown.PNG" alt="empty"/>
-              <div class="ranking__entry-icon-border no-rank-border"></div>
-            </div>
-            <div class="ranking__entry-icon-badge">3</div>
-          </div>
-          <div class="ranking__row-text">
-            <div class="name">Empty</div>
-            <div class="year"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 3 (4 trainees) -->
-      <div class="ranking__row">
-        ${[4,5,6,7].map(i => `
-          <div class="ranking__entry">
-            <div class="ranking__entry-view">
-              <div class="ranking__entry-icon">
-                <img class="ranking__entry-img" src="assets/crown.PNG" alt="empty"/>
-                <div class="ranking__entry-icon-border no-rank-border"></div>
-              </div>
-              <div class="ranking__entry-icon-badge">${i}</div>
-            </div>
-            <div class="ranking__row-text">
-              <div class="name">Empty</div>
-              <div class="year"></div>
-            </div>
-          </div>
-        `).join("")}
-      </div>
-
-      <!-- Row 4 (5 trainees) -->
-      <div class="ranking__row">
-        ${[8,9,10,11,12].map(i => `
-          <div class="ranking__entry">
-            <div class="ranking__entry-view">
-              <div class="ranking__entry-icon">
-                <img class="ranking__entry-img" src="assets/crown.PNG" alt="empty"/>
-                <div class="ranking__entry-icon-border no-rank-border"></div>
-              </div>
-              <div class="ranking__entry-icon-badge">${i}</div>
-            </div>
-            <div class="ranking__row-text">
-              <div class="name">Empty</div>
-              <div class="year"></div>
-            </div>
-          </div>
-        `).join("")}
-      </div>
+      <!-- Rows are populated by JS -->
     </div>
   </div>
 
@@ -130,17 +45,19 @@
     <input id="getlink-textbox" type="text" readonly />
     <button id="copylink-button" onclick="copyLink()">Copy</button>
   </div>
+
+  <!-- Filters -->
   <div id="filters-container">
-  <div id="filters-header"><strong>Filters</strong></div>
-  <div>
-    <input type="checkbox" id="show-eliminated" onclick="showEliminatedClick(event)"/>
-    <label for="show-eliminated">Show Eliminated</label>
+    <div id="filters-header"><strong>Filters</strong></div>
+    <div>
+      <input type="checkbox" id="show-eliminated" onclick="showEliminatedClick(event)"/>
+      <label for="show-eliminated">Show Eliminated</label>
+    </div>
+    <div>
+      <input type="checkbox" id="show-top12" onclick="showTop12Click(event)" checked/>
+      <label for="show-top12">Show Current Top 12</label>
+    </div>
   </div>
-  <div>
-    <input type="checkbox" id="show-top12" onclick="showTop12Click(event)" checked/>
-    <label for="show-top12">Show Current Top 12</label>
-  </div>
-</div>
 
   <!-- Scripts -->
   <script src="csv.js"></script>
