@@ -31,20 +31,15 @@ body {
 
 /* Styles for banner */
 #top-banner {
-  background: linear-gradient(to bottom #fd5e6d 50%, #ef5079 50%, var(--banner-bg-start), var(--banner-bg-end);
-}
-  /* background-color: var(--banner-bg-color); */
-  padding: 20px;
-text-align: center;
-}
-#banner- {
-height: 120px;
+  #banner {
+  background: linear-gradient(to right, #fd5e6d 50%, #ef5079 50%);
+  height: 120px; /* slightly bigger */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  }
+}
 #banner-image {
   width: 125px;
   margin-bottom: 8px;
