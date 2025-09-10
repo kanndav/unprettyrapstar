@@ -18,7 +18,7 @@ function newTrainee() {
     name_romanized: '&#8203;',
     name_hangul: '&#8203;',
     grade: 'no',
-    image: 'crown.png', // 👑 use crown.png for empty spots
+    image: 'crown.PNG', // 👑 use crown.png for empty spots
     selected: false,
     eliminated: false,
     top12: false
