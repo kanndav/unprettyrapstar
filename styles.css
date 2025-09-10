@@ -11,6 +11,10 @@
   --save-box-gray: #b1b1b1;
 
   --checked-blue: #052ae2CC;
+
+/* group border colors */
+--group: #253669;
+--no-rank: #707070;
 }
 
 p {
