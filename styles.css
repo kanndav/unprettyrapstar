@@ -359,3 +359,30 @@ text-align: center;
   cursor: -webkit-grab;
   cursor: grab;
 }
+
+/* Crown icon */
+.table__entry-icon-crown,
+.ranking__entry-icon-crown {
+  background: url("./assets/crown.png") no-repeat center;
+  background-size: contain;
+}
+
+/* Check icon */
+.table__entry-check {
+  background: url("./assets/check.png") no-repeat center;
+  background-size: contain;
+}
+
+/* Search icon */
+#table__filter-input {
+  background: url("./assets/search.png") no-repeat 10px center;
+  background-size: 16px;
+  padding-left: 30px; /* push text so it doesn’t overlap */
+}
+
+/* Banner image */
+#banner-image {
+  max-width: 200px;
+  display: block;
+  margin: 0 auto;
+}
