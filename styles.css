@@ -217,12 +217,15 @@ text-align: center;
   background-position: center center;
   background-origin: content-box;
 }
-/* Different entry borders */
-.t-rank-border {
-  border: 5px solid var(--t-rank);
+/* Entry borders */
+.group-border {
+  border: 5px solid var(--group); /* non-eliminated */
 }
-.no-rank-border {
-  border: none;
+
+.no-rank-border,
+.eliminated .table__entry-icon-border,
+.eliminated .ranking__entry-icon-border {
+  border: 5px solid var(--no-rank); /* eliminated */
 }
 .eliminated .table__entry-icon-border {
   border: 5px solid var(--no-rank);
@@ -312,13 +315,16 @@ text-align: center;
   text-align: center;
 }
 
-/* Styles for different badge colors */
-.bg-t {
-  background-color: var(--f-rank);
-}
+/* Styles for badges */
+.bg-no,
 .eliminated .ranking__entry-icon-badge {
   background-color: var(--no-rank);
 }
+
+.bg-default {
+  background-color: var(--group);
+}
+
 
 .ranking__entry .company {
   color: var(--ranking-affil-gray);
