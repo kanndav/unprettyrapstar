@@ -36,14 +36,73 @@
           <input id="table__filter-input" oninput="filterTrainees(event)" type="text" placeholder="Search"/>
         </div>
         <div id="table__entry-container">
-<div class="ranking__entry">
-  <div class="ranking__entry-icon">
-    <img class="ranking__entry-img" src="assets/trainees/yunon.png"/>
-    <div class="ranking__entry-icon-border group-border"></div>
-    <div class="ranking__entry-icon-badge bg-default">1</div>
-  </div>
-  <div class="ranking__row-text">
-    <div class="name"><strong>Yunon</strong></div>
+<script>
+// Trainee data with full image links
+const trainees = [
+  {name: "Yunon", hangul: "유논", country: "JAPAN", img: "assets/trainees/yunon.png"},
+  {name: "Urara", hangul: "우라라", country: "JAPAN", img: "assets/trainees/urara.png"},
+  {name: "Shiho", hangul: "시호", country: "JAPAN", img: "assets/trainees/shiho.png"},
+  {name: "Sena", hangul: "세나", country: "JAPAN", img: "assets/trainees/sena.png"},
+  {name: "Sea", hangul: "세아", country: "JAPAN", img: "assets/trainees/sea.png"},
+  {name: "Sasa", hangul: "사사", country: "JAPAN", img: "assets/trainees/sasa.png"},
+  {name: "Saaya", hangul: "사아야", country: "JAPAN", img: "assets/trainees/saaya.png"},
+  {name: "Rino", hangul: "리노", country: "JAPAN", img: "assets/trainees/rino.png"},
+  {name: "Niko", hangul: "니코", country: "JAPAN", img: "assets/trainees/niko.png"},
+  {name: "Natsuho", hangul: "나츠호", country: "JAPAN", img: "assets/trainees/natsuho.png"},
+  {name: "Nana", hangul: "나나", country: "JAPAN", img: "assets/trainees/nana.png"},
+  {name: "Miyabi", hangul: "미야비", country: "JAPAN", img: "assets/trainees/miyabi.png"},
+  {name: "Mirika", hangul: "미리카", country: "JAPAN", img: "assets/trainees/mirika.png"},
+  {name: "Mia", hangul: "미아", country: "JAPAN", img: "assets/trainees/mia.png"},
+  {name: "Mayu", hangul: "마유", country: "JAPAN", img: "assets/trainees/mayu.png"},
+  {name: "Koko", hangul: "코코", country: "JAPAN", img: "assets/trainees/koko.png"},
+  {name: "Karin", hangul: "카린", country: "JAPAN", img: "assets/trainees/karin.png"},
+  {name: "Hina", hangul: "히나", country: "JAPAN", img: "assets/trainees/hina.png"},
+  {name: "Hanabi", hangul: "하나비", country: "JAPAN", img: "assets/trainees/hanabi.png"},
+  {name: "Kokoro", hangul: "코코로", country: "JAPAN", img: "assets/trainees/kokoro.png"},
+  {name: "Yun Seoyoung", hangul: "윤서영", country: "KOREA", img: "assets/trainees/seoyoung.png"},
+  {name: "Yoon Sooin", hangul: "윤수인", country: "KOREA", img: "assets/trainees/sooin.png"},
+  {name: "Yoon Chaeeun", hangul: "윤채은", country: "KOREA", img: "assets/trainees/chaeeun.png"},
+  {name: "Yang Jaeyun", hangul: "양재윤", country: "KOREA", img: "assets/trainees/jaeyun.png"},
+  {name: "Shin Yookyung", hangul: "신유경", country: "KOREA", img: "assets/trainees/yookyung.png"},
+  {name: "Ryu Hajin", hangul: "류하진 A", country: "KOREA", img: "assets/trainees/hajin.png"},
+  {name: "Nam Yuju", hangul: "남유주", country: "JAPAN/KOREA", img: "assets/trainees/yuju.png"},
+  {name: "Min Jiho", hangul: "민지호", country: "KOREA", img: "assets/trainees/jiho.png"},
+  {name: "Lee Seohyun", hangul: "이서현", country: "KOREA", img: "assets/trainees/seohyun.png"},
+  {name: "Lee Jooeun", hangul: "이주은", country: "KOREA", img: "assets/trainees/jooeun.png"},
+  {name: "Lee Chaeyeon", hangul: "이채연", country: "KOREA", img: "assets/trainees/chaeyeon.png"},
+  {name: "Lee Chaehyun", hangul: "이채현", country: "KOREA", img: "assets/trainees/chaehyun.png"},
+  {name: "Kwon Dohee", hangul: "권도희", country: "KOREA", img: "assets/trainees/dohee.png"},
+  {name: "Kim Yeeun", hangul: "김예은", country: "KOREA", img: "assets/trainees/yeeun.png"},
+  {name: "Kim Sujin", hangul: "김준서", country: "KOREA", img: "assets/trainees/sujin.png"},
+  {name: "Kim Doyi", hangul: "김도이", country: "KOREA", img: "assets/trainees/doyi.png"},
+  {name: "Kim Chaerin", hangul: "김채린", country: "KOREA", img: "assets/trainees/chaerin.png"},
+  {name: "Han Heeheon", hangul: "한희연", country: "KOREA", img: "assets/trainees/heeheon.png"},
+  {name: "Choi Youmin", hangul: "최유민", country: "KOREA", img: "assets/trainees/youmin.png"},
+  {name: "Choi Gayoon", hangul: "최가윤", country: "KOREA", img: "assets/trainees/gayoon.png"}
+];
+
+// Reference to table container
+const tableContainer = document.getElementById("table__entry-container");
+
+// Generate entries
+trainees.forEach(t => {
+  const div = document.createElement("div");
+  div.classList.add("table__entry"); // non-eliminated by default
+
+  div.innerHTML = `
+    <div class="table__entry-icon">
+      <img class="table__entry-img" src="${t.img}" />
+      <div class="table__entry-icon-border group-border"></div>
+      <div class="table__entry-icon-badge bg-default"></div>
+    </div>
+    <div class="table__entry-text">
+      <strong><span class="name">${t.name}</span></strong>
+      <span class="hangul">(${t.hangul})</span>
+    </div>
+  `;
+  tableContainer.appendChild(div);
+});
+</script>
   </div>
 </div>
         </div>
