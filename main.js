@@ -73,10 +73,20 @@ function populateTable(list) {
     const eliminatedClass = (showEliminated && t.eliminated) ? "eliminated" : "";
     const top12Class = (showTop12 && t.top12) ? "top12" : "";
 
-    const html = `
-      <div class="table__entry ${eliminatedClass}" data-id="${t.id}">
-        <div class="table__entry-icon">
-          <img class="table__entry-img" src="assets/trainees/${t.image}" />
+const html = `
+  <div class="table__entry ${eliminatedClass}" data-id="${t.id}">
+    <div class="table__entry-icon">
+      <img class="table__entry-img" src="assets/trainees/${t.image}" />
+      ${t.selected ? '<img class="table__entry-check" src="assets/check.png"/>' : ''}
+    </div>
+    <div class="table__entry-text">
+      <span class="name"><strong style="font-size:14px;">${t.name_romanized}</strong></span><br>
+      <span class="hangul">${t.name_hangul}</span><br>
+      <span class="year">${t.birthyear ? (new Date().getFullYear() - t.birthyear) : ""} yrs</span><br>
+      <span class="natl">${t.name_japanese ? t.name_japanese : ""}</span>
+    </div>
+  </div>
+`;
           <div class="table__entry-icon-border ${t.grade}-rank-border"></div>
           ${top12Class ? '<div class="table__entry-icon-crown"></div>' : ''}
           ${t.selected ? '<img class="table__entry-check" src="assets/check.png"/>' : ''}
