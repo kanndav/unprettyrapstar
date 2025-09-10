@@ -26,7 +26,6 @@ body {
   font-family: 'Open Sans', sans-serif;
   display: inline-block;
   min-width: 100%;
- 
   background-color: white;
 }
 
@@ -81,7 +80,7 @@ text-align: center;
   border: none;
   outline: 0;
   /* setting up search icon */
-  background-image: url("assets/search.png");
+  background-image: url("search.png");
   background-size: 10px 10px;
   background-position: 7px 7px;
   background-repeat: no-repeat;
@@ -219,20 +218,8 @@ text-align: center;
   background-origin: content-box;
 }
 /* Different entry borders */
-.a-rank-border {
-  border: 5px solid var(--a-rank);
-}
-.b-rank-border {
-  border: 5px solid var(--b-rank);
-}
-.c-rank-border {
-  border: 5px solid var(--c-rank);
-}
-.d-rank-border {
-  border: 5px solid var(--d-rank);
-}
-.f-rank-border {
-  border: 5px solid var(--f-rank);
+.t-rank-border {
+  border: 5px solid var(--t-rank);
 }
 .no-rank-border {
   border: none;
@@ -255,11 +242,6 @@ text-align: center;
 .table__entry .hangul {
   font-size: 12px;
   color: var(--other-name-gray);
-}
-.table__entry .companyandyear {
-  font-size: 10px;
-  color: var(--affil-gray);
-  display: block;
 }
 
 /* Ranking Styles */
@@ -331,22 +313,7 @@ text-align: center;
 }
 
 /* Styles for different badge colors */
-.bg-no {
-  background-color: var(--no-rank);
-}
-.bg-a {
-  background-color: var(--a-rank);
-}
-.bg-b {
-  background-color: var(--b-rank);
-}
-.bg-c {
-  background-color: var(--c-rank);
-}
-.bg-d {
-  background-color: var(--d-rank);
-}
-.bg-f {
+.bg-t {
   background-color: var(--f-rank);
 }
 .eliminated .ranking__entry-icon-badge {
