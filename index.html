@@ -36,17 +36,16 @@
           <input id="table__filter-input" oninput="filterTrainees(event)" type="text" placeholder="Search"/>
         </div>
         <div id="table__entry-container">
-          <!-- <div class="table__entry">
-            <div class="table__entry-icon">
-              <img class="table__entry-img" src="assets/trainees/yunon.png"/>
-              <div class="table__entry-icon-border a-rank-border"></div>
-              <img class="table__entry-check" src="assets/check.png"/>
-            </div>
-            <div class="table__entry-text">
-              <strong><span class="name">Yunon</span></strong>
-              <span class="hangul">(유논)</span>
-            </div>
-          </div> -->
+<div class="ranking__entry">
+  <div class="ranking__entry-icon">
+    <img class="ranking__entry-img" src="assets/trainees/yunon.png"/>
+    <div class="ranking__entry-icon-border group-border"></div>
+    <div class="ranking__entry-icon-badge bg-default">1</div>
+  </div>
+  <div class="ranking__row-text">
+    <div class="name"><strong>Yunon</strong></div>
+  </div>
+</div>
         </div>
       </div>
       <div id="filters-container">
@@ -72,16 +71,16 @@
     <div id="ranking__pyramid">
       <div id="ranking__title"><strong>TOP 12</strong></div>
       <div class="ranking__row">
-        <!-- <div class="ranking__entry">
-          <div class="ranking__entry-icon">
-            <img class="ranking__entry-img" src="assets/trainees/yunon.png"/>
-            <div class="ranking__entry-icon-border a-rank-border"></div>
-            <div class="ranking__entry-icon-badge">1</div>
-          </div>
-          <div class="ranking__row-text">
-            <div class="name"><strong>Yunon</strong></div>
-          </div>
-        </div> -->
+<div class="ranking__entry eliminated">
+  <div class="ranking__entry-icon">
+    <img class="ranking__entry-img" src="assets/trainees/yunon.png"/>
+    <div class="ranking__entry-icon-border"></div> <!-- uses eliminated border -->
+    <div class="ranking__entry-icon-badge"></div> <!-- uses eliminated bg -->
+  </div>
+  <div class="ranking__row-text">
+    <div class="name"><strong>Yunon</strong></div>
+  </div>
+</div>
       </div>
       <div class="ranking__row"></div>
       <div class="ranking__row"></div>
