@@ -31,6 +31,7 @@ body {
   background: radial-gradient(circle, var(--banner-bg-start), var(--banner-bg-end) 60%);
   /* background-color: var(--banner-bg-color); */
   padding: 25px;
+text-align: center;
 
 }
 #banner-image {
