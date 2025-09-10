@@ -213,23 +213,14 @@ height: 120px;
   border-radius: 50%;
   box-sizing: border-box;
 }
-.table__entry-icon-crown, .ranking__entry-icon-crown {
+.table__entry-icon-crown {
+  background: url("assets/crown.PNG") no-repeat center;
+  background-size: contain;
+  width: 20px;
+  height: 20px;
   position: absolute;
-  padding: 2px;
-  box-sizing: border-box;
-  top: -5px;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #e3e3e3;
-  background-image: url(assets/crown.PNG);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-origin: content-box;
+  top: 5px;
+  right: 5px;
 }
 /* Entry borders */
 .group-border {
