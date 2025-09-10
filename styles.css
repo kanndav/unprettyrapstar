@@ -213,14 +213,17 @@ height: 120px;
   border-radius: 50%;
   box-sizing: border-box;
 }
-.table__entry-icon-crown {
-  background: url("assets/crown.PNG") no-repeat center;
-  background-size: contain;
-  width: 20px;
-  height: 20px;
+.table__entry-icon-crown, 
+.ranking__entry-icon-crown {
+  width: 18px;        /* smaller width */
+  height: 18px;       /* smaller height */
+  top: -5px;          /* adjust vertical position */
+  right: -5px;        /* adjust horizontal position */
+  background-size: contain;  /* keeps aspect ratio */
+  background-repeat: no-repeat;
+  background-position: center;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  z-index: 2;         /* ensures it sits above the image */
 }
 /* Entry borders */
 .group-border {
