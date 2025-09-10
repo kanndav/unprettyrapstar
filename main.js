@@ -1,444 +1,240 @@
-// Takes in name of csv and populates necessary data in table
-function readFromCSV(path) {
-  var rawFile = new XMLHttpRequest();
-  rawFile.open("GET", path, false);
-  rawFile.onreadystatechange = function() {
-    if (rawFile.readyState === 4) {
-      if (rawFile.status === 200 || rawFile.status == 0) {
-        let allText = rawFile.responseText;
-        let out = CSV.parse(allText);
-        let trainees = convertCSVArrayToTraineeData(out);
-        populateTable(trainees);
-      }
-    }
-  };
-  rawFile.send(null);
-}
-
-function findTraineeById(id) {
-  for (let i = 0; i < trainees.length; i++) {
-    if (id === trainees[i].id) { // if trainee's match
-      return trainees[i];
-    }
-  }
-  return newTrainee();
-}
-
-// If the user has saved a ranking via id, then recover it here
-function getRanking() {
-  var urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("r")) {
-    let rankString = atob(urlParams.get("r")) // decode the saved ranking
-    let rankingIds = [];
-    for (let i = 0; i < rankString.length; i += 3) {
-      let traineeId = rankString.substr(i, 3); // get each id of the trainee by substringing every 3 chars
-      rankingIds.push(parseInt(traineeId));
-    }
-    console.log(rankingIds);
-    // use the retrieved rankingIds to populate ranking
-    for (let i = 0; i < rankingIds.length; i++) {
-      traineeId = rankingIds[i];
-      if (traineeId < 0) {
-        ranking[i] = newTrainee();
-      } else {
-        let trainee = findTraineeById(rankingIds[i])
-        // let trainee = trainees[rankingIds[i]];
-        trainee.selected = true;
-        ranking[i] = trainee;
-      }
-    }
-    // refresh table to show checkboxes
-    rerenderTable();
-    // refresh ranking to show newly inserted trainees
-    rerenderRanking();
-    console.log(ranking);
-  }
-}
-
-// Takes in an array of trainees and converts it to js objects
-// Follows this schema:
-/*
-trainee: {
-  id: ... // position in csv used for simple recognition
-  name_romanized: ...
-  name_hangul: ...
-  name_global: ...
-  company: ...
-  group: ...
-  birthyear: ...
-  image: ...
-  selected: false/true // whether user selected them
-  eliminated: false/true
-  top8: false/true
-}
-*/
-function convertCSVArrayToTraineeData(csvArrays) {
-  trainees = csvArrays.map(function(traineeArray, index) {
-    trainee = {};
-    trainee.name_romanized = traineeArray[0];
-    if (traineeArray[2] === "-") {
-      // trainee only has hangul
-      trainee.name_hangul = traineeArray[1];
-    } else {
-      trainee.name_global = traineeArray[1];
-      trainee.name_hangul = traineeArray[2];
-    }
-    trainee.company = traineeArray[3];
-    trainee.group = traineeArray[4]
-    trainee.birthyear = traineeArray[5];
-    trainee.eliminated = traineeArray[6] === 'e'; // sets trainee to be eliminated if 'e' appears in 6th col
-    trainee.top8 = traineeArray[6] === 't'; // sets trainee to top 8 if 't' appears in 6th column
-    trainee.id = parseInt(traineeArray[7]) - 1; // trainee id is the original ordering of the trainees in the first csv
-    trainee.image =
-      trainee.name_romanized.replaceAll(" ", "").replace("-", "") + ".png";
-    return trainee;
-  });
-  filteredTrainees = trainees;
-  return trainees;
-}
-
-// Constructor for a blank trainee
-function newTrainee() {
-  return {
-    id: -1, // -1 denotes a blank trainee spot
-    name_romanized: '&#8203;', // this is a blank character
-    company: '&#8203;', // this is a blank character
-    group: 'no',
-    image: 'emptyrank.png',
-  };
-}
-
-// Constructor for a blank ranking list
-function newRanking() {
-  // holds the ordered list of rankings that the user selects
-  let ranking = new Array(8);
-  for (let i = 0; i < ranking.length; i++) {
-    ranking[i] = newTrainee();
-  }
-  return ranking;
-}
-
-// rerender method for table (search box)
-// TODO: this site might be slow to rerender because it clears + adds everything each time
-function rerenderTable() {
-  clearTable();
-  populateTable(filteredTrainees);
-  // populateRanking();
-}
-
-// rerender method for ranking
-function rerenderRanking() {
-  clearRanking();
-  populateRanking();
-}
-
-function removeAllChildren(element) {
-  while (element.firstChild) {
-    element.removeChild(element.firstChild);
-  }
-}
-
-// Clears out the table
-function clearTable() {
-  let table = document.getElementById("table__entry-container");
-  removeAllChildren(table);
-}
-
-// Clears out the ranking
-function clearRanking() {
-  // Currently just duplicates first ranking entry
-  let ranking_chart = document.getElementById("ranking__pyramid");
-  let rankRows = Array.from(ranking_chart.children).slice(1); // remove the title element
-  // let rankEntry = rankRows[0].children[0];
-  for (let i = 0; i < rowNums.length; i++) {
-    let rankRow = rankRows[i];
-    for (let j = 0; j < rowNums[i]; j++) {
-      removeAllChildren(rankRow);
-    }
-  }
-}
-
-// Uses populated local data structure from readFromCSV to populate table
-function populateTable(trainees) {
-  // Currently just duplicates the first table entry
-  let table = document.getElementById("table__entry-container");
-  exampleEntry = table.children[0];
-  for (let i = 0; i < trainees.length; i++) {
-    // generate and insert the html for a new trainee table entry
-    table.insertAdjacentHTML("beforeend", populateTableEntry(trainees[i]));
-    // add the click listener to the just inserted element
-    let insertedEntry = table.lastChild;
-    insertedEntry.addEventListener("click", function (event) {
-      tableClicked(trainees[i]);
-    });
-  }
-}
-
-function populateTableEntry(trainee) {
-  // eliminated will have value "eliminated" only if trainee is eliminated and showEliminated is true, otherwise this is ""
-  let eliminated = (showEliminated && trainee.eliminated) && "eliminated";
-  let top8 = (showTop8 && trainee.top8) && "top8";
-  const tableEntry = `
-  <div class="table__entry ${eliminated}">
-    <div class="table__entry-icon">
-      <img class="table__entry-img" src="assets/trainees/${trainee.image}" />
-      <div class="table__entry-icon-border ${trainee.group.toLowerCase()}-group-border"></div>
-      ${
-        top8 ? '<div class="table__entry-icon-crown"></div>' : ''
-      }
-      ${
-        trainee.selected ? '<img class="table__entry-check" src="assets/check.png"/>' : ""
-      }
-    </div>
-    <div class="table__entry-text">
-      <span class="name"><strong>${trainee.name_romanized}</strong></span>
-      <span class="hangul">(${trainee.name_hangul})</span>
-      <span class="companyandyear">${trainee.company.toUpperCase()} •
-      ${trainee.birthyear}</span>
-    </div>
-  </div>`;
-  return tableEntry;
-}
-
-// Uses populated local data structure from getRanking to populate ranking
-function populateRanking() {
-  // Currently just duplicates first ranking entry
-  let ranking_chart = document.getElementById("ranking__pyramid");
-  let rankRows = Array.from(ranking_chart.children).slice(1); // remove the title element
-  // let rankEntry = rankRows[0].children[0];
-  let currRank = 1;
-  for (let i = 0; i < rowNums.length; i++) {
-    let rankRow = rankRows[i];
-    for (let j = 0; j < rowNums[i]; j++) {
-      let currTrainee = ranking[currRank-1];
-      rankRow.insertAdjacentHTML("beforeend", populateRankingEntry(currTrainee, currRank))
-
-      let insertedEntry = rankRow.lastChild;
-      let dragIcon = insertedEntry.children[0].children[0]; // drag icon is just the trainee image and border
-      let iconBorder = dragIcon.children[1]; // this is just the border and the recipient of dragged elements
-      // only add these event listeners if a trainee exists in this slot
-      if (currTrainee.id >= 0) {
-        // add event listener to remove item
-        insertedEntry.addEventListener("click", function (event) {
-          rankingClicked(currTrainee);
-        });
-        // add event listener for dragging
-        dragIcon.setAttribute('draggable', true);
-        dragIcon.classList.add("drag-cursor");
-        dragIcon.addEventListener("dragstart", createDragStartListener(currRank - 1));
-      }
-      // add event listeners for blank/filled ranking entries
-      iconBorder.addEventListener("dragenter", createDragEnterListener());
-      iconBorder.addEventListener("dragleave", createDragLeaveListener());
-      iconBorder.addEventListener("dragover", createDragOverListener());
-      iconBorder.addEventListener("drop", createDropListener());
-      // }
-      currRank++;
-    }
-  }
-}
+// =======================
+// GLOBAL VARIABLES
+// =======================
+let trainees = [];
+let filteredTrainees = [];
+let ranking = [];
+const rowNums = [1, 2, 4, 5];
+let showEliminated = false;
+let showTop12 = true;
+const currentURL = "https://yourgithubusername.github.io/";
 
 const abbreviatedCompanies = {
   "RAINBOW BRIDGE WORLD": "RBW",
   "BLOCKBERRY CREATIVE": "BBC",
   "INDIVIDUAL TRAINEE": "INDIVIDUAL",
-  "HANGZHOU TIME FLOWING C&E": "HTF C&E",
-  "NEEDSLAB GLOBAL&CULTURE" : "NEEDSLAB G&C"
-  
-}
-
-function populateRankingEntry(trainee, currRank) {
-  let modifiedCompany = trainee.company.toUpperCase();
-  modifiedCompany = modifiedCompany.replace("ENTERTAINMENT", "ENT.");
-  if (abbreviatedCompanies[modifiedCompany]) {
-    modifiedCompany = abbreviatedCompanies[modifiedCompany];
-  }
-  let eliminated = (showEliminated && trainee.eliminated) && "eliminated";
-  let top8 = (showTop8 && trainee.top8) && "top8";
-  const rankingEntry = `
-  <div class="ranking__entry ${eliminated}">
-    <div class="ranking__entry-view">
-      <div class="ranking__entry-icon">
-        <img class="ranking__entry-img" src="assets/trainees/${trainee.image}" />
-        <div class="ranking__entry-icon-border ${trainee.group.toLowerCase()}-group-border" data-rankid="${currRank-1}"></div>
-      </div>
-      <div class="ranking__entry-icon-badge bg-${trainee.group.toLowerCase()}">${currRank}</div>
-      ${
-        top8 ? '<div class="ranking__entry-icon-crown"></div>' : ''
-      }
-    </div>
-    <div class="ranking__row-text">
-      <div class="name"><strong>${trainee.name_romanized}</strong></div>
-      <div class="company">${modifiedCompany}</div>
-    </div>
-  </div>`;
-  return rankingEntry;
-}
-
-// Event handlers for table
-function tableClicked(trainee) {
-  if (trainee.selected) {
-    // Remove the trainee from the ranking
-    let success = removeRankedTrainee(trainee);
-    if (success) { // if removed successfully
-      trainee.selected = !trainee.selected;
-    } else {
-      return;
-    }
-  } else {
-    // Add the trainee to the ranking
-    let success = addRankedTrainee(trainee);
-    if (success) { // if added successfully
-      trainee.selected = true;
-    } else {
-      return;
-    }
-  }
-  rerenderTable();
-  rerenderRanking();
-}
-
-// Event handler for ranking
-function rankingClicked(trainee) {
-	if (trainee.selected) {
-    trainee.selected = !trainee.selected;
-    // Remove the trainee from the ranking
-    removeRankedTrainee(trainee);
-  }
-  rerenderTable();
-	rerenderRanking();
-}
-
-function swapTrainees(index1, index2) {
-  tempTrainee = ranking[index1];
-  ranking[index1] = ranking[index2];
-  ranking[index2] = tempTrainee;
-  rerenderRanking();
-}
-
-// Controls alternate ways to spell trainee names
-// to add new entries use the following format:
-// <original>: [<alternate1>, <alternate2>, <alternate3>, etc...]
-// <original> is the original name as appearing on csv
-// all of it should be lower case
-const alternateRomanizations = {
-  'baek jaehyeon': ['baek jaehyun'],
-  'bang junhyuk': ['win'],
-  'cho myeongsu': ['cho myungsoo', 'jo myeongsu'],
-  'chuei liyu': ['fredrick choi','cui liyu','choi liyu'],
-  'chung sanghyeon': ['jung sanghyeon'],
-  'jo gyehyeon': ['jo gyehyun'],
-  'jun leejeong': ['jeon leejeong','jun leejung','jeon leejung'],
-  'jung hyunjun': ['jeong hyeonjun', 'jung hyeonjun','jeong hyungun'],
-  'kim geonwoo': ['kim gunwoo'],
-  'kim hyeonseo': ['kim hyunseo'],
-  'kim junmin': ['jayder'],
-  'kim taejo': ['tj'],
-  'kim youngjun': ['kim yeongjun'],
-  'lee hyeop': ['lee hyup'],
-  'moon suhnbin': ['moon sunbin'],
-  'muhn wonjun': ['moon wonjun'],
-  'noh huijun': ['no huijun'],
-  'park junseong': ['park junsung'],
-  'reeonn': ['3d'],
-  'seo won': ['seowon'],
-  'yang dawit': ['yang david'],
-  'yang heuichan': ['yang heechan'],
-  'yeom yechan': ['jake'],
-  'chen jinxin': ['jayden'],
-  'chen lichi': ['rickey','chen liqi'],
-  'hong zihhao': ['hong zihao'],
-  'huang hsinyu': ['huang xinyou','neo'],
-  'krystian': ['wang nanjun'],
-  'lin chingen': ['lynn','lin qingen'],
-  'qi lin': ['kylin'],
-  'wang zhongzhi': ['wang zhongzi'],
-  'xuan hao': ['swen'],
-  'zhao guangxu':['lynn lynn']
 };
 
-// uses the current filter text to create a subset of trainees with matching info
-function filterTrainees(event) {
-  let filterText = event.target.value.toLowerCase();
-  // filters trainees based on name, alternate names, and company
-  filteredTrainees = trainees.filter(function (trainee) {
-    let initialMatch = includesIgnCase(trainee.name_romanized, filterText) || includesIgnCase(trainee.company, filterText);
-    // if alernates exists then check them as well
-    let alternateMatch = false;
-    let alternates = alternateRomanizations[trainee.name_romanized.toLowerCase()]
-    if (alternates) {
-      for (let i = 0; i < alternates.length; i++) {
-        alternateMatch = alternateMatch || includesIgnCase(alternates[i], filterText);
-      }
+const alternateRomanizations = {
+  // example: 'heo yunjin': ['heo yoonjin', 'huh yoonjin'],
+};
+
+// =======================
+// TRAINEE CONSTRUCTORS
+// =======================
+function newTrainee() {
+  return {
+    id: -1,
+    name_romanized: '&#8203;',
+    name_hangul: '&#8203;',
+    company: '&#8203;',
+    grade: 'no',
+    image: 'emptyrank.png',
+    selected: false,
+    eliminated: false,
+    top12: false
+  };
+}
+
+function newRanking() {
+  let r = [];
+  for (let i = 0; i < 12; i++) {
+    r.push(newTrainee());
+  }
+  return r;
+}
+
+// =======================
+// CSV READING
+// =======================
+function readFromCSV(path) {
+  const rawFile = new XMLHttpRequest();
+  rawFile.open("GET", path, false);
+  rawFile.onreadystatechange = function() {
+    if (rawFile.readyState === 4 && (rawFile.status === 200 || rawFile.status === 0)) {
+      const allText = rawFile.responseText;
+      const csvArray = CSV.parse(allText);
+      trainees = csvArray.map((row, index) => {
+        const t = {};
+        t.name_romanized = row[0];
+        t.name_hangul = row[2] === "-" ? row[1] : row[2];
+        t.name_japanese = row[2] === "-" ? null : row[1];
+        t.company = row[3];
+        t.grade = row[4].toLowerCase();
+        t.birthyear = row[5];
+        t.eliminated = row[6] === 'e';
+        t.top12 = row[6] === 't';
+        t.id = parseInt(row[7]) - 1;
+        t.image = t.name_romanized.replace(" ", "").replace("-", "") + ".jpg";
+        t.selected = false;
+        return t;
+      });
+      filteredTrainees = trainees;
+      populateTable(filteredTrainees);
     }
-    return initialMatch || alternateMatch;
+  };
+  rawFile.send(null);
+}
+
+// =======================
+// TABLE POPULATION
+// =======================
+function populateTable(list) {
+  const container = document.getElementById("table__entry-container");
+  container.innerHTML = ""; // clear table
+
+  list.forEach(t => {
+    const eliminatedClass = (showEliminated && t.eliminated) ? "eliminated" : "";
+    const top12Class = (showTop12 && t.top12) ? "top12" : "";
+
+    const html = `
+      <div class="table__entry ${eliminatedClass}" data-id="${t.id}">
+        <div class="table__entry-icon">
+          <img class="table__entry-img" src="assets/trainees/${t.image}" />
+          <div class="table__entry-icon-border ${t.grade}-rank-border"></div>
+          ${top12Class ? '<div class="table__entry-icon-crown"></div>' : ''}
+          ${t.selected ? '<img class="table__entry-check" src="assets/check.png"/>' : ''}
+        </div>
+        <div class="table__entry-text">
+          <span class="name"><strong>${t.name_romanized}</strong></span>
+          <span class="hangul">(${t.name_hangul})</span>
+          <span class="companyandyear">${t.company.toUpperCase()} • ${t.birthyear}</span>
+        </div>
+      </div>
+    `;
+    container.insertAdjacentHTML("beforeend", html);
+
+    // Add click handler
+    container.lastChild.addEventListener("click", () => tableClicked(t));
   });
-  filteredTrainees = sortedTrainees(filteredTrainees);
-  rerenderTable();
 }
 
-// Checks if mainString includes a subString and ignores case
-function includesIgnCase(mainString, subString) {
-  return mainString.toLowerCase().includes(subString.toLowerCase());
-}
+// =======================
+// PYRAMID / RANKING
+// =======================
+function populateRanking() {
+  const pyramid = document.getElementById("ranking__pyramid");
+  const rows = Array.from(pyramid.children).slice(1); // skip title
+  let rankIndex = 0;
 
-// Finds the first blank spot for
-function addRankedTrainee(trainee) {
-  for (let i = 0; i < ranking.length; i++) {
-    if (ranking[i].id === -1) { // if spot is blank denoted by -1 id
-      ranking[i] = trainee;
-      return true;
+  rows.forEach((row, rowIdx) => {
+    row.innerHTML = "";
+    for (let i = 0; i < rowNums[rowIdx]; i++) {
+      const t = ranking[rankIndex];
+      const eliminatedClass = (showEliminated && t.eliminated) ? "eliminated" : "";
+      const top12Class = (showTop12 && t.top12) ? "top12" : "";
+
+      let comp = t.company.toUpperCase().replace("ENTERTAINMENT", "ENT.");
+      if (abbreviatedCompanies[comp]) comp = abbreviatedCompanies[comp];
+
+      const html = `
+        <div class="ranking__entry ${eliminatedClass}" data-id="${t.id}">
+          <div class="ranking__entry-view">
+            <div class="ranking__entry-icon" draggable="${t.id>=0}">
+              <img class="ranking__entry-img" src="assets/trainees/${t.image}" />
+              <div class="ranking__entry-icon-border ${t.grade}-rank-border"></div>
+              ${top12Class ? '<div class="ranking__entry-icon-crown"></div>' : ''}
+            </div>
+            <div class="ranking__entry-icon-badge bg-${t.grade}">${rankIndex+1}</div>
+          </div>
+          <div class="ranking__row-text">
+            <div class="name"><strong>${t.name_romanized}</strong></div>
+            <div class="company">${comp}</div>
+          </div>
+        </div>
+      `;
+      row.insertAdjacentHTML("beforeend", html);
+      rankIndex++;
     }
-  }
-  return false;
+  });
 }
 
-function removeRankedTrainee(trainee) {
-  for (let i = 0; i < ranking.length; i++) {
-    if (ranking[i].id === trainee.id) { // if trainee's match
-      ranking[i] = newTrainee();
-      return true;
-    }
-  }
-  return false;
+// =======================
+// INTERACTIONS
+// =======================
+function tableClicked(t) {
+  if (t.selected) removeRankedTrainee(t);
+  else addRankedTrainee(t);
+  rerenderAll();
 }
 
-const currentURL = "https://kpopranker.github.io/boysplanet2";
-// Serializes the ranking into a string and appends that to the current URL
+function rankingClicked(t) {
+  if (t.selected) removeRankedTrainee(t);
+  rerenderAll();
+}
+
+function addRankedTrainee(t) {
+  const idx = ranking.findIndex(r => r.id === -1);
+  if (idx !== -1) {
+    ranking[idx] = t;
+    t.selected = true;
+  }
+}
+
+function removeRankedTrainee(t) {
+  const idx = ranking.findIndex(r => r.id === t.id);
+  if (idx !== -1) {
+    ranking[idx] = newTrainee();
+    t.selected = false;
+  }
+}
+
+function rerenderAll() {
+  populateTable(filteredTrainees);
+  populateRanking();
+}
+
+// =======================
+// SEARCH FILTER
+// =======================
+function filterTrainees(event) {
+  const query = event.target.value.toLowerCase();
+  filteredTrainees = trainees.filter(t => {
+    const matchName = t.name_romanized.toLowerCase().includes(query);
+    const matchAlt = alternateRomanizations[t.name_romanized.toLowerCase()]?.some(a => a.includes(query));
+    const matchCompany = t.company.toLowerCase().includes(query);
+    return matchName || matchAlt || matchCompany;
+  });
+  rerenderAll();
+}
+
+// =======================
+// SHARE LINK
+// =======================
 function generateShareLink() {
-  let shareCode = ranking.map(function (trainee) {
-    let threeCharID = ("00" + trainee.id).slice(-3); // adds zeros to front of digit if necessary e.g 1 --> 001, 10 --> 010
-    return threeCharID;
-  }).join("");
-  console.log(shareCode);
-  shareCode = btoa(shareCode);
-  shareURL = currentURL + "?r=" + shareCode;
-  showShareLink(shareURL);
-}
-
-function showShareLink(shareURL) {
-  let shareBox = document.getElementById("getlink-textbox");
-  shareBox.value = shareURL;
-  document.getElementById("getlink-textbox").style.display = "block";
+  const code = ranking.map(t => ("0"+t.id).slice(-2)).join("");
+  const shareURL = currentURL + "?r=" + btoa(code);
+  const box = document.getElementById("getlink-textbox");
+  box.value = shareURL;
+  box.style.display = "block";
   document.getElementById("copylink-button").style.display = "block";
 }
 
 function copyLink() {
-  let shareBox = document.getElementById("getlink-textbox");
-  shareBox.select();
+  const box = document.getElementById("getlink-textbox");
+  box.select();
   document.execCommand("copy");
 }
 
-// holds the list of all trainees
-var trainees = [];
-// holds the list of trainees to be shown on the table
-var filteredTrainees = [];
-// holds the ordered list of rankings that the user selects
-var ranking = newRanking();
-const rowNums = [1, 3, 4];
-//window.addEventListener("load", function () {
+// =======================
+// INITIALIZATION
+// =======================
+window.addEventListener("load", () => {
+  ranking = newRanking();
+  readFromCSV("./trainees.csv"); // your CSV
   populateRanking();
-  readFromCSV("./trainee_info.csv");
-//});
-// checks the URL for a ranking and uses it to populate ranking
-getRanking();
+  getRankingFromURL();
+});
+
+function getRankingFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has("r")) return;
+
+  const code = atob(params.get("r"));
+  for (let i=0; i<12; i++) {
+    const id = parseInt(code.substr(i*2, 2));
+    ranking[i] = id >= 0 ? trainees[id] : newTrainee();
+    if (id >= 0) trainees[id].selected = true;
+  }
+  rerenderAll();
+}
