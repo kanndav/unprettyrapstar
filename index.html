@@ -89,11 +89,6 @@ trainees.forEach(t => {
   const div = document.createElement("div");
   div.classList.add("table__entry"); // non-eliminated by default
 
-  tableContainer.appendChild(div);
-});
-</script>
-  </div>
-</div>
         </div>
       </div>
       <div id="filters-container">
@@ -103,8 +98,8 @@ trainees.forEach(t => {
           <label class="checkbox-label" for="show-eliminated">Show Eliminated (At Bottom)</label>
         </div>
         <div>
-          <input type="checkbox" name="show-top12" id="show-top12" onclick="showTop12Click(event)"/>
-          <label class="checkbox-label" for="show-top12">Show Current Top 12</label>
+          <input type="checkbox" name="show-top8" id="show-top8" onclick="showTop8Click(event)"/>
+          <label class="checkbox-label" for="show-top8">Show Current Top 8</label>
         </div>
       </div>
       <div id="sharelink-container">
@@ -117,18 +112,18 @@ trainees.forEach(t => {
       </div>
     </div>
     <div id="ranking__pyramid">
-      <div id="ranking__title"><strong>TOP 12</strong></div>
+      <div id="ranking__title"><strong>TOP 8</strong></div>
       <div class="ranking__row">
-<div class="ranking__entry eliminated">
-  <div class="ranking__entry-icon">
-    <img class="ranking__entry-img" src="assets/trainees/yunon.png"/>
-    <div class="ranking__entry-icon-border"></div> <!-- uses eliminated border -->
-    <div class="ranking__entry-icon-badge"></div> <!-- uses eliminated bg -->
-  </div>
-  <div class="ranking__row-text">
-    <div class="name"><strong>Yunon</strong></div>
-  </div>
-</div>
+        <!-- <div class="ranking__entry">
+          <div class="ranking__entry-icon">
+            <img class="ranking__entry-img" src="assets/trainees/LeeGaeun.jpg" />
+            <div class="ranking__entry-icon-border a-rank-border"></div>
+            <div class="ranking__entry-icon-badge">1</div>
+          </div>
+          <div class="ranking__row-text">
+            <div class="name"><strong>Lee Gaeun</strong></div>
+          </div>
+        </div> -->
       </div>
       <div class="ranking__row"></div>
       <div class="ranking__row"></div>
