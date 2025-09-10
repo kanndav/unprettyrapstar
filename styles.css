@@ -34,7 +34,7 @@ body {
   background: linear-gradient(to bottom, var(--banner-bg-start), var(--banner-bg-end) 20%);
 }
   /* background-color: var(--banner-bg-color); */
-  padding: 25px;
+  padding: 20px;
 text-align: center;
 
 }
