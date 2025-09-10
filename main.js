@@ -4,7 +4,7 @@
 let trainees = [];
 let filteredTrainees = [];
 let ranking = [];
-const rowNums = [1, 2, 4, 5];
+const rowNums = [1, 2, 4, 5]; // pyramid rows
 let showEliminated = false;
 let showTop12 = true;
 const currentURL = "https://yourgithubusername.github.io/";
@@ -15,10 +15,12 @@ const currentURL = "https://yourgithubusername.github.io/";
 function newTrainee() {
   return {
     id: -1,
-    name_romanized: '&#8203;',
-    name_hangul: '&#8203;',
+    name_romanized: 'Empty',
+    name_hangul: '',
+    name_japanese: '',
+    birthyear: '',
     grade: 'no',
-    image: 'crown.PNG', // 👑 use crown.png for empty spots
+    image: 'crown.PNG', // use crown.png for empty spots
     selected: false,
     eliminated: false,
     top12: false
@@ -26,11 +28,7 @@ function newTrainee() {
 }
 
 function newRanking() {
-  let r = [];
-  for (let i = 0; i < 12; i++) {
-    r.push(newTrainee());
-  }
-  return r;
+  return Array.from({length: 12}, () => newTrainee());
 }
 
 // =======================
@@ -43,18 +41,22 @@ function readFromCSV(path) {
     if (rawFile.readyState === 4 && (rawFile.status === 200 || rawFile.status === 0)) {
       const allText = rawFile.responseText;
       const csvArray = CSV.parse(allText);
+
       trainees = csvArray.map((row, index) => {
-        const t = {};
-        t.name_romanized = row[0];
-        t.name_hangul = row[2] === "-" ? row[1] : row[2];
-        t.birthyear = row[5];
-        t.eliminated = row[6] === 'e';
-        t.top12 = row[6] === 't';
-        t.id = parseInt(row[7]) - 1;
-        t.image = t.name_romanized.replace(" ", "").replace("-", "") + ".png";
-        t.selected = false;
-        return t;
+        return {
+          id: index,
+          name_romanized: row[0],
+          name_hangul: row[2] === "-" ? row[1] : row[2],
+          name_japanese: row[3] === "-" ? "" : row[3],
+          birthyear: row[5],
+          eliminated: row[6] === 'e',
+          top12: row[6] === 't',
+          grade: 'no',
+          selected: false,
+          image: row[0].replace(" ", "").replace("-", "") + ".png"
+        };
       });
+
       filteredTrainees = trainees;
       populateTable(filteredTrainees);
     }
@@ -73,28 +75,20 @@ function populateTable(list) {
     const eliminatedClass = (showEliminated && t.eliminated) ? "eliminated" : "";
     const top12Class = (showTop12 && t.top12) ? "top12" : "";
 
-const html = `
-  <div class="table__entry ${eliminatedClass}" data-id="${t.id}">
-    <div class="table__entry-icon">
-      <img class="table__entry-img" src="assets/trainees/${t.image}" />
-      ${t.selected ? '<img class="table__entry-check" src="assets/check.png"/>' : ''}
-    </div>
-    <div class="table__entry-text">
-      <span class="name"><strong style="font-size:14px;">${t.name_romanized}</strong></span><br>
-      <span class="hangul">${t.name_hangul}</span><br>
-      <span class="year">${t.birthyear ? (new Date().getFullYear() - t.birthyear) : ""} yrs</span><br>
-      <span class="natl">${t.name_japanese ? t.name_japanese : ""}</span>
-    </div>
-  </div>
-`;
+    const age = t.birthyear ? new Date().getFullYear() - t.birthyear : "";
+
+    const html = `
+      <div class="table__entry ${eliminatedClass}" data-id="${t.id}">
+        <div class="table__entry-icon">
+          <img class="table__entry-img" src="assets/trainees/${t.image}" />
           <div class="table__entry-icon-border ${t.grade}-rank-border"></div>
           ${top12Class ? '<div class="table__entry-icon-crown"></div>' : ''}
-          ${t.selected ? '<img class="table__entry-check" src="assets/check.png"/>' : ''}
         </div>
         <div class="table__entry-text">
-          <span class="name"><strong>${t.name_romanized}</strong></span>
-          <span class="hangul">(${t.name_hangul})</span>
-          <span class="year">${t.birthyear}</span>
+          <span class="name">${t.name_romanized}</span>
+          <span class="hangul">${t.name_hangul}</span>
+          ${t.name_japanese ? `<span class="natl">(${t.name_japanese})</span>` : ''}
+          ${age ? `<span class="year">${age} yrs</span>` : ''}
         </div>
       </div>
     `;
@@ -110,35 +104,45 @@ const html = `
 // =======================
 function populateRanking() {
   const pyramid = document.getElementById("ranking__pyramid");
-  const rows = Array.from(pyramid.children).slice(1); // skip title
+
+  // Clear all rows except title
+  pyramid.querySelectorAll(".ranking__row").forEach(row => row.remove());
+
   let rankIndex = 0;
 
-  rows.forEach((row, rowIdx) => {
-    row.innerHTML = "";
-    for (let i = 0; i < rowNums[rowIdx]; i++) {
-      const t = ranking[rankIndex];
+  rowNums.forEach(numInRow => {
+    const rowDiv = document.createElement("div");
+    rowDiv.classList.add("ranking__row");
+
+    for (let i = 0; i < numInRow; i++) {
+      const t = ranking[rankIndex] || newTrainee();
       const eliminatedClass = (showEliminated && t.eliminated) ? "eliminated" : "";
       const top12Class = (showTop12 && t.top12) ? "top12" : "";
+      const age = t.birthyear ? new Date().getFullYear() - t.birthyear : "";
 
-      const html = `
+      const entryHtml = `
         <div class="ranking__entry ${eliminatedClass}" data-id="${t.id}">
           <div class="ranking__entry-view">
-            <div class="ranking__entry-icon" draggable="${t.id>=0}">
+            <div class="ranking__entry-icon">
               <img class="ranking__entry-img" src="assets/trainees/${t.image}" />
               <div class="ranking__entry-icon-border ${t.grade}-rank-border"></div>
               ${top12Class ? '<div class="ranking__entry-icon-crown"></div>' : ''}
             </div>
-            <div class="ranking__entry-icon-badge">${rankIndex+1}</div>
+            <div class="ranking__entry-icon-badge">${rankIndex + 1}</div>
           </div>
           <div class="ranking__row-text">
-            <div class="name"><strong>${t.name_romanized}</strong></div>
-            <div class="year">${t.birthyear}</div>
+            <div class="name">${t.name_romanized}</div>
+            <div class="hangul">${t.name_hangul}</div>
+            ${t.name_japanese ? `<div class="natl">${t.name_japanese}</div>` : ''}
+            ${age ? `<div class="year">${age} yrs</div>` : ''}
           </div>
         </div>
       `;
-      row.insertAdjacentHTML("beforeend", html);
+      rowDiv.insertAdjacentHTML("beforeend", entryHtml);
       rankIndex++;
     }
+
+    pyramid.appendChild(rowDiv);
   });
 }
 
@@ -148,11 +152,6 @@ function populateRanking() {
 function tableClicked(t) {
   if (t.selected) removeRankedTrainee(t);
   else addRankedTrainee(t);
-  rerenderAll();
-}
-
-function rankingClicked(t) {
-  if (t.selected) removeRankedTrainee(t);
   rerenderAll();
 }
 
@@ -182,10 +181,7 @@ function rerenderAll() {
 // =======================
 function filterTrainees(event) {
   const query = event.target.value.toLowerCase();
-  filteredTrainees = trainees.filter(t => {
-    const matchName = t.name_romanized.toLowerCase().includes(query);
-    return matchName;
-  });
+  filteredTrainees = trainees.filter(t => t.name_romanized.toLowerCase().includes(query));
   rerenderAll();
 }
 
@@ -212,7 +208,7 @@ function copyLink() {
 // =======================
 window.addEventListener("load", () => {
   ranking = newRanking();
-  readFromCSV("./trainees.csv"); // your CSV
+  readFromCSV("./trainees.csv"); 
   populateRanking();
   getRankingFromURL();
 });
