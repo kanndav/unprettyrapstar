@@ -130,6 +130,17 @@
     <input id="getlink-textbox" type="text" readonly />
     <button id="copylink-button" onclick="copyLink()">Copy</button>
   </div>
+  <div id="filters-container">
+  <div id="filters-header"><strong>Filters</strong></div>
+  <div>
+    <input type="checkbox" id="show-eliminated" onclick="showEliminatedClick(event)"/>
+    <label for="show-eliminated">Show Eliminated</label>
+  </div>
+  <div>
+    <input type="checkbox" id="show-top12" onclick="showTop12Click(event)" checked/>
+    <label for="show-top12">Show Current Top 12</label>
+  </div>
+</div>
 
   <!-- Scripts -->
   <script src="csv.js"></script>
