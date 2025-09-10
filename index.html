@@ -89,17 +89,6 @@ trainees.forEach(t => {
   const div = document.createElement("div");
   div.classList.add("table__entry"); // non-eliminated by default
 
-  div.innerHTML = `
-    <div class="table__entry-icon">
-      <img class="table__entry-img" src="${t.img}" />
-      <div class="table__entry-icon-border group-border"></div>
-      <div class="table__entry-icon-badge bg-default"></div>
-    </div>
-    <div class="table__entry-text">
-      <strong><span class="name">${t.name}</span></strong>
-      <span class="hangul">(${t.hangul})</span>
-    </div>
-  `;
   tableContainer.appendChild(div);
 });
 </script>
