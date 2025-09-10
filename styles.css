@@ -211,7 +211,7 @@ text-align: center;
   height: 15px;
   border-radius: 50%;
   background-color: #e3e3e3;
-  background-image: url(./assets/crown.png);
+  background-image: url(./assets/crown.PNG);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
@@ -363,7 +363,7 @@ text-align: center;
 /* Crown icon */
 .table__entry-icon-crown,
 .ranking__entry-icon-crown {
-  background: url("./assets/crown.png") no-repeat center;
+  background: url("./assets/crown.PNG") no-repeat center;
   background-size: contain;
 }
 
