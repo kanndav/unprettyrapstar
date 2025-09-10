@@ -1,6 +1,6 @@
 :root {
-  --banner-bg-start: #fd5e6d;
-  --banner-bg-end: #ef5079;
+  --banner-bg-start: #4f41a3;
+  --banner-bg-end: #d4aafb;
   --produce-gray: #e4e4e4;
   --search-text-gray: #949494;
   --search-gray: #f2f2f2;
@@ -11,14 +11,6 @@
   --save-box-gray: #b1b1b1;
 
   --checked-blue: #052ae2CC;
-
-  /* ranking border colors */
-  --a-rank: #fb4a8c;
-  --b-rank: #fc840c;
-  --c-rank: #ffc407;
-  --d-rank: #19b468;
-  --f-rank: #a6a6a4;
-  --no-rank: #707070;
 }
 
 p {
@@ -30,8 +22,7 @@ body {
   font-family: 'Open Sans', sans-serif;
   display: inline-block;
   min-width: 100%;
-  /*TODO: I had the weirdest bug where if i don't have this background white the top banner would disappear
-  it's super late right now and I'm not sure what is going on i need to look into this later */
+ 
   background-color: white;
 }
 
