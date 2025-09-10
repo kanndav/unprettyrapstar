@@ -9,16 +9,6 @@ let showEliminated = false;
 let showTop12 = true;
 const currentURL = "https://yourgithubusername.github.io/";
 
-const abbreviatedCompanies = {
-  "RAINBOW BRIDGE WORLD": "RBW",
-  "BLOCKBERRY CREATIVE": "BBC",
-  "INDIVIDUAL TRAINEE": "INDIVIDUAL",
-};
-
-const alternateRomanizations = {
-  // example: 'heo yunjin': ['heo yoonjin', 'huh yoonjin'],
-};
-
 // =======================
 // TRAINEE CONSTRUCTORS
 // =======================
@@ -27,9 +17,8 @@ function newTrainee() {
     id: -1,
     name_romanized: '&#8203;',
     name_hangul: '&#8203;',
-    company: '&#8203;',
     grade: 'no',
-    image: 'emptyrank.png',
+    image: 'crown.png', // 👑 use crown.png for empty spots
     selected: false,
     eliminated: false,
     top12: false
@@ -58,9 +47,6 @@ function readFromCSV(path) {
         const t = {};
         t.name_romanized = row[0];
         t.name_hangul = row[2] === "-" ? row[1] : row[2];
-        t.name_japanese = row[2] === "-" ? null : row[1];
-        t.company = row[3];
-        t.grade = row[4].toLowerCase();
         t.birthyear = row[5];
         t.eliminated = row[6] === 'e';
         t.top12 = row[6] === 't';
@@ -124,9 +110,6 @@ function populateRanking() {
       const eliminatedClass = (showEliminated && t.eliminated) ? "eliminated" : "";
       const top12Class = (showTop12 && t.top12) ? "top12" : "";
 
-      let comp = t.company.toUpperCase().replace("ENTERTAINMENT", "ENT.");
-      if (abbreviatedCompanies[comp]) comp = abbreviatedCompanies[comp];
-
       const html = `
         <div class="ranking__entry ${eliminatedClass}" data-id="${t.id}">
           <div class="ranking__entry-view">
@@ -135,10 +118,11 @@ function populateRanking() {
               <div class="ranking__entry-icon-border ${t.grade}-rank-border"></div>
               ${top12Class ? '<div class="ranking__entry-icon-crown"></div>' : ''}
             </div>
-            <div class="ranking__entry-icon-badge bg-${t.grade}">${rankIndex+1}</div>
+            <div class="ranking__entry-icon-badge">${rankIndex+1}</div>
           </div>
           <div class="ranking__row-text">
             <div class="name"><strong>${t.name_romanized}</strong></div>
+            <div class="year">${t.birthyear}</div>
           </div>
         </div>
       `;
@@ -190,8 +174,7 @@ function filterTrainees(event) {
   const query = event.target.value.toLowerCase();
   filteredTrainees = trainees.filter(t => {
     const matchName = t.name_romanized.toLowerCase().includes(query);
-    const matchAlt = alternateRomanizations[t.name_romanized.toLowerCase()]?.some(a => a.includes(query));
-    return matchName || matchAlt;
+    return matchName;
   });
   rerenderAll();
 }
