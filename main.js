@@ -65,7 +65,7 @@ function readFromCSV(path) {
         t.eliminated = row[6] === 'e';
         t.top12 = row[6] === 't';
         t.id = parseInt(row[7]) - 1;
-        t.image = t.name_romanized.replace(" ", "").replace("-", "") + ".jpg";
+        t.image = t.name_romanized.replace(" ", "").replace("-", "") + ".png";
         t.selected = false;
         return t;
       });
@@ -98,7 +98,7 @@ function populateTable(list) {
         <div class="table__entry-text">
           <span class="name"><strong>${t.name_romanized}</strong></span>
           <span class="hangul">(${t.name_hangul})</span>
-          <span class="companyandyear">${t.company.toUpperCase()} • ${t.birthyear}</span>
+          <span class="year">${t.birthyear}</span>
         </div>
       </div>
     `;
@@ -139,7 +139,6 @@ function populateRanking() {
           </div>
           <div class="ranking__row-text">
             <div class="name"><strong>${t.name_romanized}</strong></div>
-            <div class="company">${comp}</div>
           </div>
         </div>
       `;
@@ -192,8 +191,7 @@ function filterTrainees(event) {
   filteredTrainees = trainees.filter(t => {
     const matchName = t.name_romanized.toLowerCase().includes(query);
     const matchAlt = alternateRomanizations[t.name_romanized.toLowerCase()]?.some(a => a.includes(query));
-    const matchCompany = t.company.toLowerCase().includes(query);
-    return matchName || matchAlt || matchCompany;
+    return matchName || matchAlt;
   });
   rerenderAll();
 }
