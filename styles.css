@@ -31,7 +31,7 @@ body {
 
 /* Styles for banner */
 #top-banner {
-  background: linear-gradient(to bottom);(circle, var(--banner-bg-start) 50%, var(--banner-bg-end) 50%);
+  background: linear-gradient(to bottom);(circle, var(--banner-bg-start), var(--banner-bg-end) 50%);
   /* background-color: var(--banner-bg-color); */
   padding: 25px;
 text-align: center;
