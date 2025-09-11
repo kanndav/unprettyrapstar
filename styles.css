@@ -1,6 +1,6 @@
 :root {
-  --banner-bg-start: #4f41a3;
-  --banner-bg-end: #d4aafb;
+  --banner-bg-start: #fd5e6d;
+  --banner-bg-end: #ef5079;
   --produce-gray: #e4e4e4;
   --search-text-gray: #949494;
   --search-gray: #f2f2f2;
@@ -9,9 +9,6 @@
   --other-name-gray: #444444;
   --ranking-affil-gray: #989898;
   --save-box-gray: #b1b1b1;
-  --checked-blue: #052ae2CC;
-  --group: #253669;
-  --no-rank: #707070;
 }
 
 /* Reset */
